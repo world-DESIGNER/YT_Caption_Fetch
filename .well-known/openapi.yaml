@@ -11,9 +11,9 @@ paths:
       operationId: fetchCaptions
       summary: Get the captions for a YouTube video in various languages
       parameters:
-        - name: url
+        - name: video_id
           in: query
-          description: The URL of the YouTube video
+          description: The unique identifier for the YouTube video
           required: true
           schema:
             type: string
@@ -57,9 +57,9 @@ paths:
       operationId: fetchAvailableLanguages
       summary: Get the available languages for a YouTube video's captions
       parameters:
-        - name: url
+        - name: video_id
           in: query
-          description: The URL of the YouTube video
+          description: The unique identifier for the YouTube video
           required: true
           schema:
             type: string
@@ -86,10 +86,7 @@ components:
           additionalProperties:
             type: array
             items:
-              type: object
-              properties:
-                text:
-                  type: string
+              type: string
           description: The captions of the YouTube video
     fetchAvailableLanguagesResponse:
       type: object
