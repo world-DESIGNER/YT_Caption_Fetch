@@ -1,11 +1,10 @@
-
 openapi: 3.0.1
 info:
   title: YT Caption Retriever
-  description: A service that retrieves captions from YouTube videos.
-  version: '1.0.0'
+  description: A plugin that retrieves captions from YouTube videos.
+  version: '1'
 servers:
-  - url: 'https://<your-server-url>'
+  - url: https://youtube-caption-retriever.world-designer.repl.co
 paths:
   /captions:
     get:
@@ -41,26 +40,18 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: Captions successfully retrieved.
+        "200":
+          description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  captions:
-                    type: object
-                    additionalProperties:
-                      type: string
-        '400':
-          description: Bad Request - Parameters were invalid.
+                $ref: '#/components/schemas/fetchCaptionsResponse'
+        "400":
+          description: Bad Request
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+                $ref: '#/components/schemas/errorResponse'
   /available_languages:
     get:
       operationId: fetchAvailableLanguages
@@ -73,26 +64,18 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: Available languages successfully retrieved.
+        "200":
+          description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  available_languages:
-                    type: array
-                    items:
-                      type: string
-        '400':
-          description: Bad Request - Parameters were invalid.
+                $ref: '#/components/schemas/fetchAvailableLanguagesResponse'
+        "400":
+          description: Bad Request
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+                $ref: '#/components/schemas/errorResponse'
 components:
   schemas:
     fetchCaptionsResponse:
@@ -103,8 +86,11 @@ components:
           additionalProperties:
             type: array
             items:
-              type: string
-          description: The captions of the YouTube video in the requested format.
+              type: object
+              properties:
+                text:
+                  type: string
+          description: The captions of the YouTube video
     fetchAvailableLanguagesResponse:
       type: object
       properties:
@@ -112,10 +98,10 @@ components:
           type: array
           items:
             type: string
-          description: The available languages for the YouTube video's captions.
+          description: The available languages for the YouTube video's captions
     errorResponse:
       type: object
       properties:
         error:
           type: string
-          description: An error message describing the issue.
+          description: An error message describing the issue

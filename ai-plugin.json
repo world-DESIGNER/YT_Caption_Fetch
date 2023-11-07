@@ -1,0 +1,98 @@
+{
+  "version": "1.0",
+  "name": "YouTube Caption Retriever",
+  "description": "An action to retrieve captions from YouTube videos.",
+  "externalDocs": {
+    "description": "Find more info here",
+    "url": "https://docs.example.com"
+  },
+  "servers": [
+    {
+      "url": "https://youtube-caption-retriever.world-designer.repl.co",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/captions": {
+      "get": {
+        "summary": "Get the captions for a YouTube video in various languages",
+        "operationId": "fetchCaptions",
+        "tags": ["caption"],
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "description": "The URL of the YouTube video",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "description": "The format to return the captions in ('srt' or 'text')",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["srt", "text"],
+              "default": "text"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "The type of transcript to fetch ('auto' or 'manual')",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["auto", "manual"],
+              "default": "manual"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "description": "The language code for the captions",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON object containing the captions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "captions": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
