@@ -1,0 +1,121 @@
+
+openapi: 3.0.1
+info:
+  title: YT Caption Retriever
+  description: A service that retrieves captions from YouTube videos.
+  version: '1.0.0'
+servers:
+  - url: 'https://<your-server-url>'
+paths:
+  /captions:
+    get:
+      operationId: fetchCaptions
+      summary: Get the captions for a YouTube video in various languages
+      parameters:
+        - name: url
+          in: query
+          description: The URL of the YouTube video
+          required: true
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: The format to return the captions in ('srt' or 'text')
+          required: false
+          schema:
+            type: string
+            default: text
+            enum: [srt, text]
+        - name: type
+          in: query
+          description: The type of transcript to fetch ('auto' or 'manual')
+          required: false
+          schema:
+            type: string
+            default: manual
+            enum: [auto, manual]
+        - name: lang
+          in: query
+          description: The language code for the captions
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Captions successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  captions:
+                    type: object
+                    additionalProperties:
+                      type: string
+        '400':
+          description: Bad Request - Parameters were invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /available_languages:
+    get:
+      operationId: fetchAvailableLanguages
+      summary: Get the available languages for a YouTube video's captions
+      parameters:
+        - name: url
+          in: query
+          description: The URL of the YouTube video
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Available languages successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  available_languages:
+                    type: array
+                    items:
+                      type: string
+        '400':
+          description: Bad Request - Parameters were invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+components:
+  schemas:
+    fetchCaptionsResponse:
+      type: object
+      properties:
+        captions:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          description: The captions of the YouTube video in the requested format.
+    fetchAvailableLanguagesResponse:
+      type: object
+      properties:
+        available_languages:
+          type: array
+          items:
+            type: string
+          description: The available languages for the YouTube video's captions.
+    errorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: An error message describing the issue.
