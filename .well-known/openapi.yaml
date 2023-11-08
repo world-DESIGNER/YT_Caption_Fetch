@@ -4,7 +4,7 @@ info:
   description: A plugin that retrieves captions from YouTube videos.
   version: '1'
 servers:
-  - url: https://youtube-caption-retriever.world-designer.repl.co
+  - url: https://yt-caption-retriever.onrender.com
 paths:
   /captions:
     post:
