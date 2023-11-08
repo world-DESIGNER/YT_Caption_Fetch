@@ -24,12 +24,16 @@ paths:
                   type: string
                   description: The format to return the captions in ('srt' or 'text')
                   default: 'text'
-                  enum: [srt, text]
+                  enum:
+                    - srt
+                    - text
                 type:
                   type: string
                   description: The type of transcript to fetch ('auto' or 'manual')
                   default: 'manual'
-                  enum: [auto, manual]
+                  enum:
+                    - auto
+                    - manual
                 lang:
                   type: string
                   description: The language code for the captions
