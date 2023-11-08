@@ -5,13 +5,12 @@ from waitress import serve
 
 app = Flask(__name__)
 
-@app.route('/captions', methods=['POST'])
+@app.route('/captions')
 def fetch_captions():
-    data = request.get_json()
-    video_id = data.get('video_id')
-    format_type = data.get('format', 'srt')
-    transcript_type = data.get('type', 'manual')
-    lang = data.get('lang', 'en')  # Default to English if no language is provided
+    video_id = request.args.get('video_id')
+    format_type = request.args.get('format', 'srt')
+    transcript_type = request.args.get('type', 'manual')
+    lang = request.args.get('lang', 'en')  # Default to English if no language is provided
 
     if not lang:
         return jsonify({"error": "No language provided. Please provide a language code with the 'lang' parameter."}), 400
@@ -43,7 +42,7 @@ def fetch_captions():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-@app.route('/available_languages', methods=['GET'])
+@app.route('/available_languages')
 def fetch_available_languages():
     video_id = request.args.get('video_id')
 
