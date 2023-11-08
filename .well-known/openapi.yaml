@@ -1,98 +1,84 @@
 openapi: 3.0.1
 info:
   title: YT Caption Retriever
-  description: A plugin that retrieves captions from YouTube videos.
-  version: '1'
+  description: API for retrieving captions and available languages from YouTube videos.
+  version: "1.0.0"
 servers:
   - url: https://yt-caption-retriever.onrender.com
 paths:
   /captions:
-    post:
-      operationId: fetchCaptions
-      summary: Get the captions for a YouTube video in various languages
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                video_id:
-                  type: string
-                  description: The unique identifier for the YouTube video
-                format:
-                  type: string
-                  description: The format to return the captions in ('srt' or 'text')
-                  default: 'text'
-                  enum:
-                    - srt
-                    - text
-                type:
-                  type: string
-                  description: The type of transcript to fetch ('auto' or 'manual')
-                  default: 'manual'
-                  enum:
-                    - auto
-                    - manual
-                lang:
-                  type: string
-                  description: The language code for the captions
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/fetchCaptionsResponse'
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errorResponse'
-  /available_languages:
     get:
-      operationId: fetchAvailableLanguages
-      summary: Get the available languages for a YouTube video's captions
+      summary: Retrieve captions for a given YouTube video
       parameters:
-        - name: video_id
-          in: query
-          description: The unique identifier for the YouTube video
+        - in: query
+          name: video_id
           required: true
           schema:
             type: string
+          description: The YouTube video ID for which to retrieve captions.
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum: [srt, text]
+            default: srt
+          description: The format in which to retrieve the captions (SRT or plain text).
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: [manual, auto]
+            default: manual
+          description: The type of captions to retrieve (manual or auto-generated).
+        - in: query
+          name: lang
+          schema:
+            type: string
+            default: en
+          description: The language code for the captions.
       responses:
         "200":
-          description: OK
+          description: Captions retrieved successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/fetchAvailableLanguagesResponse'
+                type: object
+                properties:
+                  captions:
+                    type: string
+                    description: The retrieved captions.
         "400":
-          description: Bad Request
+          description: Bad request, possible missing parameters.
+  /available_languages:
+    get:
+      summary: List available languages for a given YouTube video
+      parameters:
+        - in: query
+          name: video_id
+          required: true
+          schema:
+            type: string
+          description: The YouTube video ID for which to list available languages.
+      responses:
+        "200":
+          description: Available languages retrieved successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/errorResponse'
+                type: object
+                properties:
+                  available_languages:
+                    type: array
+                    items:
+                      type: string
+                    description: A list of available language codes.
+        "400":
+          description: Bad request, possible missing parameters.
 components:
   schemas:
-    fetchCaptionsResponse:
-      type: object
-      properties:
-        captions:
-          type: string
-          description: The captions of the YouTube video in the requested format
-    fetchAvailableLanguagesResponse:
-      type: object
-      properties:
-        available_languages:
-          type: array
-          items:
-            type: string
-          description: The available languages for the YouTube video's captions
-    errorResponse:
+    Error:
       type: object
       properties:
         error:
           type: string
-          description: An error message describing the issue
+          description: Error message explaining what went wrong.
