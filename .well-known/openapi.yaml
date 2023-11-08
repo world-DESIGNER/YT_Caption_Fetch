@@ -9,6 +9,7 @@ paths:
   /captions:
     get:
       summary: Retrieve captions for a given YouTube video
+      operationId: getCaptions
       parameters:
         - in: query
           name: video_id
@@ -52,6 +53,7 @@ paths:
   /available_languages:
     get:
       summary: List available languages for a given YouTube video
+      operationId: getAvailableLanguages
       parameters:
         - in: query
           name: video_id
