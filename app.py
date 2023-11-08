@@ -5,8 +5,9 @@ from waitress import serve
 
 app = Flask(__name__)
 
-@app.route('/captions', methods=['GET'])
+@app.route('/captions', methods=['POST'])
 def fetch_captions():
+    data = request.get_json()
     video_id = request.args.get('video_id')
     format_type = request.args.get('format', 'text')
     transcript_type = request.args.get('type', 'manual')
