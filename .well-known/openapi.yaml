@@ -7,38 +7,32 @@ servers:
   - url: https://youtube-caption-retriever.world-designer.repl.co
 paths:
   /captions:
-    get:
+    post:
       operationId: fetchCaptions
       summary: Get the captions for a YouTube video in various languages
-      parameters:
-        - name: video_id
-          in: query
-          description: The unique identifier for the YouTube video
-          required: true
-          schema:
-            type: string
-        - name: format
-          in: query
-          description: The format to return the captions in ('srt' or 'text')
-          required: false
-          schema:
-            type: string
-            default: text
-            enum: [srt, text]
-        - name: type
-          in: query
-          description: The type of transcript to fetch ('auto' or 'manual')
-          required: false
-          schema:
-            type: string
-            default: manual
-            enum: [auto, manual]
-        - name: lang
-          in: query
-          description: The language code for the captions
-          required: true
-          schema:
-            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                video_id:
+                  type: string
+                  description: The unique identifier for the YouTube video
+                format:
+                  type: string
+                  description: The format to return the captions in ('srt' or 'text')
+                  default: 'text'
+                  enum: [srt, text]
+                type:
+                  type: string
+                  description: The type of transcript to fetch ('auto' or 'manual')
+                  default: 'manual'
+                  enum: [auto, manual]
+                lang:
+                  type: string
+                  description: The language code for the captions
       responses:
         "200":
           description: OK
@@ -82,12 +76,8 @@ components:
       type: object
       properties:
         captions:
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              type: string
-          description: The captions of the YouTube video
+          type: string
+          description: The captions of the YouTube video in the requested format
     fetchAvailableLanguagesResponse:
       type: object
       properties:
