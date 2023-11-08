@@ -8,10 +8,10 @@ app = Flask(__name__)
 @app.route('/captions', methods=['POST'])
 def fetch_captions():
     data = request.get_json()
-    video_id = request.args.get('video_id')
-    format_type = request.args.get('format', 'text')
-    transcript_type = request.args.get('type', 'manual')
-    lang = request.args.get('lang')
+    video_id = data.get('video_id')
+    format_type = data.get('format', 'srt')
+    transcript_type = data.get('type', 'manual')
+    lang = data.get('lang', 'en')  # Default to English if no language is provided
 
     if not lang:
         return jsonify({"error": "No language provided. Please provide a language code with the 'lang' parameter."}), 400
@@ -20,26 +20,25 @@ def fetch_captions():
 
     try:
         transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-        transcripts = {}
+        transcript = None
+        
+        # Selecting the transcript type
+        if transcript_type == 'manual':
+            transcript = transcript_list.find_manually_created_transcript([lang])
+        elif transcript_type == 'auto':
+            transcript = transcript_list.find_generated_transcript([lang])
+        
+        # Fetch the transcript data
+        transcript_data = transcript.fetch()
 
-        for transcript in transcript_list:
-            if (transcript_type == 'auto' and not transcript.is_generated) or (transcript_type == 'manual' and transcript.is_generated):
-                continue
+        # Format the transcript data according to the format_type
+        if format_type.lower() == 'srt':
+            formatter = SRTFormatter()
+            formatted_transcript = formatter.format_transcript(transcript_data)
+        else:
+            formatted_transcript = "\n".join([t['text'] for t in transcript_data])
 
-            if transcript.language_code != lang:
-                continue
-
-            lang_transcript = transcript.fetch()
-
-            if format_type.lower() == 'srt':
-                formatter = SRTFormatter()
-                formatted_transcript = formatter.format_transcript(lang_transcript)
-            else:
-                formatted_transcript = [t['text'] for t in lang_transcript]
-
-            transcripts[transcript.language_code] = formatted_transcript
-
-        return jsonify({"captions": transcripts})
+        return jsonify({"captions": formatted_transcript})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -53,10 +52,7 @@ def fetch_available_languages():
 
     try:
         transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-        language_codes = set()
-
-        for transcript in transcript_list:
-            language_codes.add(transcript.language_code)
+        language_codes = {transcript.language_code for transcript in transcript_list}
 
         return jsonify({"available_languages": list(language_codes)})
 
